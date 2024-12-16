@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Dateisystem und Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .login-container, .upload-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        .login-container.active, .upload-container.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .file-list {
+            margin: 20px 0;
+        }
+        .file-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .file-list ul li {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .drag-drop {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .drag-drop.drag-over {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div class="login-container active" id="loginContainer">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="username">Benutzername</label>
+            <input type="text" id="username" placeholder="Benutzername">
+        </div>
+        <div class="form-group">
+            <label for="password">Passwort</label>
+            <input type="password" id="password" placeholder="Passwort">
+        </div>
+        <div class="form-group">
+            <button id="loginButton">Einloggen</button>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="upload-container" id="uploadContainer">
+        <h2>Dateien verwalten</h2>
+
+        <!-- File System Display -->
+        <div class="file-list" id="fileList">
+            <h3>Dateisystem</h3>
+            <ul>
+                <!-- Dynamische Dateiliste -->
+            </ul>
+        </div>
+
+        <!-- Drag and Drop -->
+        <div class="drag-drop" id="dragDropArea">
+            Dateien hierher ziehen oder klicken, um Dateien auszuwählen
+        </div>
+        <input type="file" id="fileInput" multiple style="display: none;">
+    </div>
+
+    <script>
+        // Statische Zugangsdaten
+        const validUsername = "robinlm";
+        const validPassword = "Minecraft2510";
+
+        // Login-Handler
+        document.getElementById("loginButton").addEventListener("click", function () {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === validUsername && password === validPassword) {
+                document.getElementById("loginContainer").classList.remove("active");
+                document.getElementById("uploadContainer").classList.add("active");
+                loadFileSystem();
+            } else {
+                alert("Falscher Benutzername oder Passwort!");
+            }
+        });
+
+        // Dummy-Dateisystem laden
+        function loadFileSystem() {
+            const fileList = document.getElementById("fileList").querySelector("ul");
+            fileList.innerHTML = ""; // Clear previous list
+            const files = ["index.html", "style.css", "script.js", "README.md"]; // Dummy-Dateien
+            files.forEach(file => {
+                const li = document.createElement("li");
+                li.textContent = file;
+                fileList.appendChild(li);
+            });
+        }
+
+        // Drag-and-Drop-Handler
+        const dragDropArea = document.getElementById("dragDropArea");
+        const fileInput = document.getElementById("fileInput");
+
+        dragDropArea.addEventListener("click", () => fileInput.click());
+        dragDropArea.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dragDropArea.classList.add("drag-over");
+        });
+        dragDropArea.addEventListener("dragleave", () => {
+            dragDropArea.classList.remove("drag-over");
+        });
+        dragDropArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dragDropArea.classList.remove("drag-over");
+            handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
+        function handleFiles(files) {
+            for (const file of files) {
+                console.log("Datei hochgeladen:", file.name);
+                alert(`Datei "${file.name}" erfolgreich verarbeitet!`);
+                // Hier könntest du die Datei an ein Back-End schicken
+            }
+        }
+    </script>
+</body>
+</html>
